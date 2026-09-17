@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b1731" />
+    <title>ERC Email Helper</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="brand" aria-label="ERC Specialists">
+        <div class="brand-frame" aria-hidden="true"></div>
+        <div class="brand-name">ERC<span>.</span></div>
+        <div class="brand-subtitle">specialists</div>
+      </header>
+
+      <section class="intro">
+        <p class="eyebrow">EMAIL BUILDER</p>
+        <h1>Create a client email in a few taps.</h1>
+        <p>Choose the notice, add the details, then copy the finished email into Gmail.</p>
+      </section>
+
+      <form id="email-form" novalidate>
+        <fieldset class="template-picker">
+          <legend>1. Choose email type</legend>
+          <div class="template-grid" role="radiogroup" aria-label="Email type">
+            <label><input type="radio" name="template" value="refundInfo" checked /><span><b>Refund information</b><small>Refund already issued</small></span></label>
+            <label><input type="radio" name="template" value="refundIssued" /><span><b>Refund issued notice</b><small>Refund expected soon</small></span></label>
+            <label><input type="radio" name="template" value="claimsPackage" /><span><b>IRS claims package</b><small>BFS claims package</small></span></label>
+            <label><input type="radio" name="template" value="checkInfo" /><span><b>ERC check information</b><small>Check trace notice</small></span></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>2. Add notice details</legend>
+          <div class="fields">
+            <label class="field">Notice type
+              <select id="notice-type" name="notice-type">
+                <option value="707C">LTR 707C</option>
+                <option value="206C">LTR 206C</option>
+                <option value="129C">LTR 129C</option>
+                <option value="76C">LTR 76C</option>
+                <option value="custom">Other notice…</option>
+              </select>
+            </label>
+            <label class="field custom-notice" hidden>Custom notice type
+              <input id="custom-notice" type="text" inputmode="text" placeholder="e.g., 2645C" />
+            </label>
+            <label class="field">Tax quarter
+              <select id="quarter" name="quarter">
+                <option value="Q2 2020">Q2 2020</option>
+                <option value="Q3 2020">Q3 2020</option>
+                <option value="Q4 2020">Q4 2020</option>
+                <option value="Q1 2021">Q1 2021</option>
+                <option value="Q2 2021">Q2 2021</option>
+                <option value="Q3 2022">Q3 2022</option>
+                <option value="Q4 2021">Q4 2021</option>
+              </select>
+            </label>
+            <label class="field">Company name
+              <input id="company" type="text" autocomplete="organization" placeholder="Paste or type company name" required />
+            </label>
+            <label class="field date-field">Refund issued date
+              <input id="refund-date" type="date" />
+            </label>
+            <label class="field amount-field">Refund amount
+              <div class="money-input"><span>$</span><input id="amount" type="text" inputmode="decimal" placeholder="0.00" /></div>
+            </label>
+          </div>
+        </fieldset>
+
+        <button class="primary" type="submit">Build email <span aria-hidden="true">→</span></button>
+      </form>
+
+      <section class="preview" id="preview" hidden aria-live="polite">
+        <div class="preview-heading"><div><p class="eyebrow">READY TO SEND</p><h2 id="preview-subject"></h2></div><button id="start-over" class="text-button" type="button">Edit details</button></div>
+        <div class="email-copy" id="email-copy"></div>
+        <button class="primary copy-button" id="copy-email" type="button">Copy email to clipboard <span aria-hidden="true">⧉</span></button>
+        <p class="copy-message" id="copy-message" role="status"></p>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
