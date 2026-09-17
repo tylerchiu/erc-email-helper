@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0b1731" />
     <title>ERC Email Helper</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=3" />
   </head>
   <body>
     <main class="app-shell">
       <header class="brand" aria-label="ERC Specialists">
-        <img src="erc-specialists-logo-transparent.png" alt="ERC Specialists" />
+        <img src="erc-specialists-logo-transparent.png?v=3" alt="ERC Specialists" width="140" height="140" />
       </header>
 
       <section class="intro">
@@ -69,6 +69,7 @@
         </fieldset>
 
         <p class="form-changed" id="form-changed" hidden>Changes have been made to the form since the last email was generated.</p>
+        <p class="form-error" id="form-error" hidden>Please complete the highlighted required field(s) before generating the email.</p>
         <button class="primary" id="generate-email" type="submit">Generate Email <span aria-hidden="true">→</span></button>
       </form>
 
@@ -79,6 +80,6 @@
         <p class="copy-message" id="copy-message" role="status"></p>
       </section>
     </main>
-    <script src="app.js"></script>
+    <script src="app.js?v=3"></script>
   </body>
 </html>
