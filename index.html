@@ -10,73 +10,72 @@
   <body>
     <main class="app-shell">
       <header class="brand" aria-label="ERC Specialists">
-        <div class="brand-frame" aria-hidden="true"></div>
-        <div class="brand-name">ERC<span>.</span></div>
-        <div class="brand-subtitle">specialists</div>
+        <img src="erc-specialists-logo-transparent.png" alt="ERC Specialists" />
       </header>
 
       <section class="intro">
         <p class="eyebrow">EMAIL BUILDER</p>
-        <h1>Create a client email in a few taps.</h1>
+        <h1>Cute Nattie's Email App</h1>
         <p>Choose the notice, add the details, then copy the finished email into Gmail.</p>
       </section>
 
       <form id="email-form" novalidate>
         <fieldset class="template-picker">
-          <legend>1. Choose email type</legend>
+          <legend>Choose Email Type</legend>
           <div class="template-grid" role="radiogroup" aria-label="Email type">
-            <label><input type="radio" name="template" value="refundInfo" checked /><span><b>Refund information</b><small>Refund already issued</small></span></label>
-            <label><input type="radio" name="template" value="refundIssued" /><span><b>Refund issued notice</b><small>Refund expected soon</small></span></label>
-            <label><input type="radio" name="template" value="claimsPackage" /><span><b>IRS claims package</b><small>BFS claims package</small></span></label>
-            <label><input type="radio" name="template" value="checkInfo" /><span><b>ERC check information</b><small>Check trace notice</small></span></label>
+            <label><input type="radio" name="template" value="refundInfo" checked /><span>Refund Information</span></label>
+            <label><input type="radio" name="template" value="refundIssued" /><span>Refund Issued Notice</span></label>
+            <label><input type="radio" name="template" value="claimsPackage" /><span>IRS Claims Package</span></label>
+            <label><input type="radio" name="template" value="checkInfo" /><span>ERC Check Information</span></label>
           </div>
         </fieldset>
 
         <fieldset>
-          <legend>2. Add notice details</legend>
+          <legend>Add Notice Details</legend>
           <div class="fields">
-            <label class="field">Notice type
+            <label class="field">Notice Type
               <select id="notice-type" name="notice-type">
                 <option value="707C">LTR 707C</option>
                 <option value="206C">LTR 206C</option>
                 <option value="129C">LTR 129C</option>
                 <option value="76C">LTR 76C</option>
-                <option value="custom">Other notice…</option>
+                <option value="custom">Custom Notice Type</option>
               </select>
             </label>
-            <label class="field custom-notice" hidden>Custom notice type
+            <label class="field custom-notice" hidden>Custom Notice Type
               <input id="custom-notice" type="text" inputmode="text" placeholder="e.g., 2645C" />
             </label>
-            <label class="field">Tax quarter
+            <label class="field">Tax Quarter
               <select id="quarter" name="quarter">
                 <option value="Q2 2020">Q2 2020</option>
                 <option value="Q3 2020">Q3 2020</option>
                 <option value="Q4 2020">Q4 2020</option>
                 <option value="Q1 2021">Q1 2021</option>
                 <option value="Q2 2021">Q2 2021</option>
-                <option value="Q3 2022">Q3 2022</option>
+                <option value="Q3 2021">Q3 2021</option>
                 <option value="Q4 2021">Q4 2021</option>
               </select>
             </label>
-            <label class="field">Company name
+            <label class="field">Company Name
               <input id="company" type="text" autocomplete="organization" placeholder="Paste or type company name" required />
             </label>
-            <label class="field date-field">Refund issued date
+            <label class="field date-field">Refund Issued Date
               <input id="refund-date" type="date" />
             </label>
-            <label class="field amount-field">Refund amount
-              <div class="money-input"><span>$</span><input id="amount" type="text" inputmode="decimal" placeholder="0.00" /></div>
+            <label class="field amount-field">Refund Amount
+              <input id="amount" class="currency-input" type="text" inputmode="numeric" value="$0.00" aria-label="Refund Amount, enter whole digits and cents are added automatically" />
             </label>
           </div>
         </fieldset>
 
-        <button class="primary" type="submit">Build email <span aria-hidden="true">→</span></button>
+        <p class="form-changed" id="form-changed" hidden>Changes have been made to the form since the last email was generated.</p>
+        <button class="primary" id="generate-email" type="submit">Generate Email <span aria-hidden="true">→</span></button>
       </form>
 
       <section class="preview" id="preview" hidden aria-live="polite">
-        <div class="preview-heading"><div><p class="eyebrow">READY TO SEND</p><h2 id="preview-subject"></h2></div><button id="start-over" class="text-button" type="button">Edit details</button></div>
-        <div class="email-copy" id="email-copy"></div>
-        <button class="primary copy-button" id="copy-email" type="button">Copy email to clipboard <span aria-hidden="true">⧉</span></button>
+        <div class="preview-heading"><div><p class="eyebrow">READY TO SEND</p><h2>Copy Each Part Into Gmail</h2></div></div>
+        <section class="copy-section"><h3>Subject</h3><div class="email-copy subject-copy" id="subject-copy"></div><button class="secondary copy-button" id="copy-subject" type="button">Copy Subject <span aria-hidden="true">⧉</span></button></section>
+        <section class="copy-section"><h3>Email Body</h3><div class="email-copy" id="email-copy"></div><button class="primary copy-button" id="copy-body" type="button">Copy Email Body <span aria-hidden="true">⧉</span></button></section>
         <p class="copy-message" id="copy-message" role="status"></p>
       </section>
     </main>

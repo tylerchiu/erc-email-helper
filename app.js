@@ -6,8 +6,11 @@ const dateField = document.querySelector('.date-field');
 const amountField = document.querySelector('.amount-field');
 const preview = document.querySelector('#preview');
 const emailCopy = document.querySelector('#email-copy');
-const previewSubject = document.querySelector('#preview-subject');
+const subjectCopy = document.querySelector('#subject-copy');
 const copyMessage = document.querySelector('#copy-message');
+const generatedButton = document.querySelector('#generate-email');
+const formChanged = document.querySelector('#form-changed');
+let hasGenerated = false;
 
 const templates = {
   refundInfo: { subject: 'Refund Information', needsRefundDetails: true, body: ({ notice, quarter, company, date, amount }) => `Hello!\n\nWe have received LTR ${notice} for ${quarter}, for ${company}.\n\nIn summary, this notice states that a refund was issued for the tax period above on ${date} in the amount of ${amount}.\n\nIf you have further questions, please review this notice, which is password-protected with your company's EIN, in this format: XX-XXXXXXX\n\nThank you!` },
@@ -17,7 +20,11 @@ const templates = {
 };
 
 function activeTemplate() { return templates[form.elements.template.value]; }
-function formatMoney(value) { const number = Number(value.replace(/[^0-9.]/g, '')); return Number.isFinite(number) ? number.toLocaleString('en-US', { style:'currency', currency:'USD' }) : ''; }
+function formatCents(value) {
+  const digits = value.replace(/\D/g, '');
+  const number = Number(digits || '0') / 100;
+  return number.toLocaleString('en-US', { style:'currency', currency:'USD' });
+}
 function formatDate(value) { if (!value) return ''; return new Date(`${value}T12:00:00`).toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' }); }
 function updateConditionalFields() { const needsRefundDetails = activeTemplate().needsRefundDetails; dateField.hidden = !needsRefundDetails; amountField.hidden = !needsRefundDetails; document.querySelector('#refund-date').required = needsRefundDetails; amount.required = needsRefundDetails; }
 
@@ -26,8 +33,19 @@ noticeSelect.addEventListener('change', () => {
   customNoticeField.hidden = !isCustom;
   document.querySelector('#custom-notice').required = isCustom;
 });
-form.addEventListener('change', event => { if (event.target.name === 'template') updateConditionalFields(); });
-amount.addEventListener('blur', () => { if (amount.value) amount.value = formatMoney(amount.value).replace('$', ''); });
+form.addEventListener('change', event => { if (event.target.name === 'template') updateConditionalFields(); markChanged(); });
+form.addEventListener('input', event => {
+  if (event.target === amount) {
+    amount.value = formatCents(amount.value);
+    amount.setSelectionRange(amount.value.length, amount.value.length);
+  }
+  markChanged();
+});
+function markChanged() {
+  if (!hasGenerated) return;
+  formChanged.hidden = false;
+  generatedButton.innerHTML = 'Generate New Email <span aria-hidden="true">→</span>';
+}
 
 form.addEventListener('submit', event => {
   event.preventDefault();
@@ -35,18 +53,21 @@ form.addEventListener('submit', event => {
   if (!form.reportValidity()) return;
   const template = activeTemplate();
   const notice = noticeSelect.value === 'custom' ? document.querySelector('#custom-notice').value.trim() : noticeSelect.value;
-  const details = { notice, quarter: document.querySelector('#quarter').value, company: document.querySelector('#company').value.trim(), date: formatDate(document.querySelector('#refund-date').value), amount: formatMoney(amount.value) };
-  const email = `Subject: ${template.subject}\n\n${template.body(details)}`;
-  previewSubject.textContent = `Subject: ${template.subject}`;
-  emailCopy.textContent = email;
+  const details = { notice, quarter: document.querySelector('#quarter').value, company: document.querySelector('#company').value.trim(), date: formatDate(document.querySelector('#refund-date').value), amount: amount.value };
+  subjectCopy.textContent = template.subject;
+  emailCopy.textContent = template.body(details);
   preview.hidden = false;
   copyMessage.textContent = '';
+  hasGenerated = true;
+  formChanged.hidden = true;
+  generatedButton.innerHTML = 'Generate Email <span aria-hidden="true">→</span>';
   preview.scrollIntoView({ behavior:'smooth', block:'start' });
 });
 
-document.querySelector('#copy-email').addEventListener('click', async () => {
-  try { await navigator.clipboard.writeText(emailCopy.textContent); copyMessage.textContent = 'Copied — ready to paste into Gmail.'; }
-  catch { copyMessage.textContent = 'Select the email above and copy it manually.'; }
-});
-document.querySelector('#start-over').addEventListener('click', () => { preview.hidden = true; form.scrollIntoView({ behavior:'smooth', block:'start' }); });
+async function copyText(text, label) {
+  try { await navigator.clipboard.writeText(text); copyMessage.textContent = `${label} copied — ready to paste into Gmail.`; }
+  catch { copyMessage.textContent = `Select the ${label.toLowerCase()} above and copy it manually.`; }
+}
+document.querySelector('#copy-subject').addEventListener('click', () => copyText(subjectCopy.textContent, 'Subject'));
+document.querySelector('#copy-body').addEventListener('click', () => copyText(emailCopy.textContent, 'Email body'));
 updateConditionalFields();
