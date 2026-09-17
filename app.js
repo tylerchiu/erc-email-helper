@@ -7,7 +7,8 @@ const amountField = document.querySelector('.amount-field');
 const preview = document.querySelector('#preview');
 const emailCopy = document.querySelector('#email-copy');
 const subjectCopy = document.querySelector('#subject-copy');
-const copyMessage = document.querySelector('#copy-message');
+const subjectCopyMessage = document.querySelector('#subject-copy-message');
+const bodyCopyMessage = document.querySelector('#body-copy-message');
 const generatedButton = document.querySelector('#generate-email');
 const formChanged = document.querySelector('#form-changed');
 const formError = document.querySelector('#form-error');
@@ -17,7 +18,7 @@ const company = document.querySelector('#company');
 let hasGenerated = false;
 
 const templates = {
-  refundInfo: { subject: 'Refund Information', fields: ['notice', 'quarter', 'company', 'date', 'amount'], body: ({ notice, quarter, company, date, amount }) => `Hello!\n\nWe have received LTR ${notice} for ${quarter}, for ${company}.\n\nIn summary, this notice states that a refund was issued for the tax period above on ${date} in the amount of ${amount}.\n\nIf you have further questions, please review this notice, which is password-protected with your company's EIN, in this format: XX-XXXXXXX\n\nThank you!` },
+  refundInfo: { subject: 'Refund Information', fields: ['notice', 'quarter', 'company', 'date', 'amount'], body: ({ notice, quarter, company, date, amount }) => `Hello!\n\nWe have received LTR ${notice} for ${quarter}, for ${company}.\n\nIn summary, this notice states that a refund in the amount of ${amount} was issued on ${date}, for the tax period above.\n\nIf you have further questions, please review this notice, which is password-protected with your company's EIN, in this format: XX-XXXXXXX\n\nThank you!` },
   refundIssued: { subject: 'Refund Issued Notice', fields: ['notice', 'quarter', 'company'], body: ({ notice, quarter, company }) => `Hello!\n\nWe have received LTR ${notice} for ${quarter}, for ${company}.\n\nIn summary, this notice states that you will receive a refund within four to eight weeks unless other taxes or obligations are owed.\n\nIf you have further questions, please review this notice, which is password-protected with your company's EIN, in this format: XX-XXXXXXX\n\nThank you!` },
   claimsPackage: { subject: 'IRS Claims Package', fields: ['notice', 'quarter', 'company'], body: ({ notice, quarter, company }) => `Hello,\n\nWe have received LTR ${notice} for ${quarter}, for ${company}.\n\nA copy of this notice has been attached to this email and is password protected with your company’s EIN, including the hyphen, in this format: XX-XXXXXXX.\n\nTo summarize, the notice states that the BFS (Bureau of Fiscal Service) is issuing a claims package that should include a photocopy of your refund check, a claim form, and instructions. The notice states that if you do not receive that package within 30 days, to contact the BFS directly.\n\nIf you have any questions, please do not hesitate to reach out to us.\n\nThank you!` },
   checkInfo: { subject: 'ERC Check Information', fields: ['notice', 'quarter', 'company'], body: ({ notice, quarter, company }) => `Hello,\n\nWe have received LTR ${notice} for ${quarter}, for ${company}.\n\nA copy of this notice has been attached to this email and is password protected with your company’s EIN, including the hyphen, in this format: XX-XXXXXXX.\n\nTo summarize, the IRS is tracing your check.\n\nIf you have any questions, please do not hesitate to reach out to us.\n\nThank you!` }
@@ -34,16 +35,22 @@ function updateConditionalFields() {
   const visibleFields = new Set(activeTemplate().fields);
   const needsDate = visibleFields.has('date');
   const needsAmount = visibleFields.has('amount');
-  dateField.hidden = !needsDate;
-  amountField.hidden = !needsAmount;
+  setVisibility(dateField, needsDate);
+  setVisibility(amountField, needsAmount);
   refundDate.required = needsDate;
   amount.required = needsAmount;
   updateCustomNoticeField();
 }
 
+function setVisibility(element, isVisible) {
+  element.hidden = !isVisible;
+  element.classList.toggle('is-hidden', !isVisible);
+  element.style.display = isVisible ? '' : 'none';
+}
+
 function updateCustomNoticeField() {
   const isCustom = noticeSelect.value === 'custom';
-  customNoticeField.hidden = !isCustom;
+  setVisibility(customNoticeField, isCustom);
   customNoticeInput.required = isCustom;
 }
 
@@ -69,7 +76,14 @@ function validateVisibleFields() {
 noticeSelect.addEventListener('change', () => {
   updateCustomNoticeField();
 });
-form.addEventListener('change', event => { if (event.target.name === 'template') updateConditionalFields(); markChanged(); });
+form.addEventListener('change', event => {
+  if (event.target.name === 'template') {
+    updateConditionalFields();
+    resetGeneratedEmail();
+    return;
+  }
+  markChanged();
+});
 form.addEventListener('input', event => {
   if (event.target === amount) {
     amount.value = formatCents(amount.value);
@@ -88,6 +102,18 @@ function markChanged() {
   generatedButton.innerHTML = 'Generate New Email <span aria-hidden="true">→</span>';
 }
 
+function resetGeneratedEmail() {
+  preview.hidden = true;
+  subjectCopy.textContent = '';
+  emailCopy.textContent = '';
+  subjectCopyMessage.textContent = '';
+  bodyCopyMessage.textContent = '';
+  hasGenerated = false;
+  formChanged.hidden = true;
+  formError.hidden = true;
+  generatedButton.innerHTML = 'Generate Email <span aria-hidden="true">→</span>';
+}
+
 form.addEventListener('submit', event => {
   event.preventDefault();
   updateConditionalFields();
@@ -98,17 +124,18 @@ form.addEventListener('submit', event => {
   subjectCopy.textContent = template.subject;
   emailCopy.textContent = template.body(details);
   preview.hidden = false;
-  copyMessage.textContent = '';
+  subjectCopyMessage.textContent = '';
+  bodyCopyMessage.textContent = '';
   hasGenerated = true;
   formChanged.hidden = true;
   generatedButton.innerHTML = 'Generate Email <span aria-hidden="true">→</span>';
   preview.scrollIntoView({ behavior:'smooth', block:'start' });
 });
 
-async function copyText(text, label) {
-  try { await navigator.clipboard.writeText(text); copyMessage.textContent = `${label} copied — ready to paste into Gmail.`; }
-  catch { copyMessage.textContent = `Select the ${label.toLowerCase()} above and copy it manually.`; }
+async function copyText(text, successMessage, targetMessage) {
+  try { await navigator.clipboard.writeText(text); targetMessage.textContent = successMessage; }
+  catch { targetMessage.textContent = 'Copy failed. Select the text above and copy it manually.'; }
 }
-document.querySelector('#copy-subject').addEventListener('click', () => copyText(subjectCopy.textContent, 'Subject'));
-document.querySelector('#copy-body').addEventListener('click', () => copyText(emailCopy.textContent, 'Email body'));
+document.querySelector('#copy-subject').addEventListener('click', () => copyText(subjectCopy.textContent, 'Subject copied.', subjectCopyMessage));
+document.querySelector('#copy-body').addEventListener('click', () => copyText(emailCopy.textContent, 'Email body copied.', bodyCopyMessage));
 updateConditionalFields();

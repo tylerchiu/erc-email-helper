@@ -5,18 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0b1731" />
     <title>ERC Email Helper</title>
-    <link rel="stylesheet" href="styles.css?v=3" />
+    <link rel="stylesheet" href="styles.css?v=4" />
   </head>
   <body>
     <main class="app-shell">
       <header class="brand" aria-label="ERC Specialists">
-        <img src="erc-specialists-logo-transparent.png?v=3" alt="ERC Specialists" width="140" height="140" />
+        <img src="erc-specialists-logo-transparent.png?v=4" alt="ERC Specialists" width="105" height="105" />
       </header>
 
       <section class="intro">
         <p class="eyebrow">EMAIL BUILDER</p>
         <h1>Cute Nattie's Email App</h1>
-        <p>Choose the notice, add the details, then copy the finished email into Gmail.</p>
       </section>
 
       <form id="email-form" novalidate>
@@ -42,7 +41,7 @@
                 <option value="custom">Custom Notice Type</option>
               </select>
             </label>
-            <label class="field custom-notice" hidden>Custom Notice Type
+            <label class="field custom-notice is-hidden" hidden>Custom Notice Type
               <input id="custom-notice" type="text" inputmode="text" placeholder="e.g., 2645C" />
             </label>
             <label class="field">Tax Quarter
@@ -74,12 +73,11 @@
       </form>
 
       <section class="preview" id="preview" hidden aria-live="polite">
-        <div class="preview-heading"><div><p class="eyebrow">READY TO SEND</p><h2>Copy Each Part Into Gmail</h2></div></div>
-        <section class="copy-section"><h3>Subject</h3><div class="email-copy subject-copy" id="subject-copy"></div><button class="secondary copy-button" id="copy-subject" type="button">Copy Subject <span aria-hidden="true">⧉</span></button></section>
-        <section class="copy-section"><h3>Email Body</h3><div class="email-copy" id="email-copy"></div><button class="primary copy-button" id="copy-body" type="button">Copy Email Body <span aria-hidden="true">⧉</span></button></section>
-        <p class="copy-message" id="copy-message" role="status"></p>
+        <div class="preview-heading"><p class="eyebrow">READY TO SEND</p></div>
+        <section class="copy-section"><h3>Subject</h3><div class="email-copy subject-copy" id="subject-copy"></div><button class="primary copy-button" id="copy-subject" type="button">Copy Subject <span aria-hidden="true">⧉</span></button><p class="copy-message" id="subject-copy-message" role="status"></p></section>
+        <section class="copy-section"><h3>Email Body</h3><div class="email-copy" id="email-copy"></div><button class="primary copy-button" id="copy-body" type="button">Copy Email Body <span aria-hidden="true">⧉</span></button><p class="copy-message" id="body-copy-message" role="status"></p></section>
       </section>
     </main>
-    <script src="app.js?v=3"></script>
+    <script src="app.js?v=4"></script>
   </body>
 </html>
