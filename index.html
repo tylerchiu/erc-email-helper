@@ -4,17 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0b1731" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <title>ERC Email Helper</title>
-    <link rel="stylesheet" href="styles.css?v=4" />
+    <link rel="stylesheet" href="styles.css?v=7" />
   </head>
   <body>
+    <aside class="secret-feature" aria-label="Secret surprise">
+      <button class="secret-trigger" type="button" aria-label="Hover here for a secret">
+        <span>Hover Here</span>
+        <span>For a Secret!</span>
+      </button>
+      <div class="secret-backdrop" aria-hidden="true"></div>
+      <div class="secret-face-wrap" aria-hidden="true">
+        <img src="jackson-face.png?v=1" alt="" />
+      </div>
+    </aside>
+
     <main class="app-shell">
       <header class="brand" aria-label="ERC Specialists">
-        <img src="erc-specialists-logo-transparent.png?v=4" alt="ERC Specialists" width="105" height="105" />
+        <img src="erc-specialists-logo-transparent.png?v=6" alt="ERC Specialists" width="105" height="105" />
       </header>
 
       <section class="intro">
-        <p class="eyebrow">EMAIL BUILDER</p>
         <h1>Cute Nattie's Email App</h1>
       </section>
 
@@ -31,7 +42,7 @@
 
         <fieldset>
           <legend>Add Notice Details</legend>
-          <div class="fields">
+          <div class="fields" data-build="5">
             <label class="field">Notice Type
               <select id="notice-type" name="notice-type">
                 <option value="707C">LTR 707C</option>
@@ -40,9 +51,6 @@
                 <option value="76C">LTR 76C</option>
                 <option value="custom">Custom Notice Type</option>
               </select>
-            </label>
-            <label class="field custom-notice is-hidden" hidden>Custom Notice Type
-              <input id="custom-notice" type="text" inputmode="text" placeholder="e.g., 2645C" />
             </label>
             <label class="field">Tax Quarter
               <select id="quarter" name="quarter">
@@ -54,6 +62,9 @@
                 <option value="Q3 2021">Q3 2021</option>
                 <option value="Q4 2021">Q4 2021</option>
               </select>
+            </label>
+            <label class="field custom-notice is-hidden" hidden>Custom Notice Type
+              <input id="custom-notice" type="text" inputmode="text" placeholder="e.g., 2645C" />
             </label>
             <label class="field">Company Name
               <input id="company" type="text" autocomplete="organization" placeholder="Paste or type company name" required />
@@ -67,17 +78,19 @@
           </div>
         </fieldset>
 
-        <p class="form-changed" id="form-changed" hidden>Changes have been made to the form since the last email was generated.</p>
-        <p class="form-error" id="form-error" hidden>Please complete the highlighted required field(s) before generating the email.</p>
+        <div class="form-feedback" aria-live="polite">
+          <p class="form-changed" id="form-changed" hidden>Changes have been made to the form since the last email was generated.</p>
+          <p class="form-error" id="form-error" hidden>Please complete the highlighted required field(s) before generating the email.</p>
+        </div>
         <button class="primary" id="generate-email" type="submit">Generate Email <span aria-hidden="true">→</span></button>
       </form>
 
       <section class="preview" id="preview" hidden aria-live="polite">
         <div class="preview-heading"><p class="eyebrow">READY TO SEND</p></div>
-        <section class="copy-section"><h3>Subject</h3><div class="email-copy subject-copy" id="subject-copy"></div><button class="primary copy-button" id="copy-subject" type="button">Copy Subject <span aria-hidden="true">⧉</span></button><p class="copy-message" id="subject-copy-message" role="status"></p></section>
-        <section class="copy-section"><h3>Email Body</h3><div class="email-copy" id="email-copy"></div><button class="primary copy-button" id="copy-body" type="button">Copy Email Body <span aria-hidden="true">⧉</span></button><p class="copy-message" id="body-copy-message" role="status"></p></section>
+        <section class="copy-section"><h3>Subject</h3><div class="email-copy subject-copy" id="subject-copy"></div><button class="primary copy-button" id="copy-subject" type="button">Copy Subject <span aria-hidden="true">⧉</span></button><p class="copy-message" id="subject-copy-message" role="status" hidden></p></section>
+        <section class="copy-section"><h3>Email Body</h3><div class="email-copy" id="email-copy"></div><button class="primary copy-button" id="copy-body" type="button">Copy Email Body <span aria-hidden="true">⧉</span></button><p class="copy-message" id="body-copy-message" role="status" hidden></p></section>
       </section>
     </main>
-    <script src="app.js?v=4"></script>
+    <script src="app.js?v=6"></script>
   </body>
 </html>

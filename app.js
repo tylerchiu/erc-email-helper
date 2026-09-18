@@ -15,6 +15,7 @@ const formError = document.querySelector('#form-error');
 const customNoticeInput = document.querySelector('#custom-notice');
 const refundDate = document.querySelector('#refund-date');
 const company = document.querySelector('#company');
+const templateInputs = document.querySelectorAll('input[name="template"]');
 let hasGenerated = false;
 
 const templates = {
@@ -59,6 +60,12 @@ function setFieldError(input, hasError) {
   input.setAttribute('aria-invalid', String(hasError));
 }
 
+function clearValidationErrors() {
+  form.querySelectorAll('.field-error').forEach(field => field.classList.remove('field-error'));
+  form.querySelectorAll('[aria-invalid="true"]').forEach(input => input.removeAttribute('aria-invalid'));
+  formError.hidden = true;
+}
+
 function validateVisibleFields() {
   const needsRefundDetails = activeTemplate().fields.includes('date');
   const validation = [
@@ -70,18 +77,22 @@ function validateVisibleFields() {
   validation.forEach(([input, hasError]) => setFieldError(input, hasError));
   const hasErrors = validation.some(([, hasError]) => hasError);
   formError.hidden = !hasErrors;
+  if (hasErrors) formChanged.hidden = true;
   return !hasErrors;
 }
 
 noticeSelect.addEventListener('change', () => {
   updateCustomNoticeField();
 });
-form.addEventListener('change', event => {
-  if (event.target.name === 'template') {
+templateInputs.forEach(input => {
+  input.addEventListener('change', () => {
     updateConditionalFields();
+    clearValidationErrors();
     resetGeneratedEmail();
-    return;
-  }
+  });
+});
+form.addEventListener('change', event => {
+  if (event.target.name === 'template') return;
   markChanged();
 });
 form.addEventListener('input', event => {
@@ -103,11 +114,13 @@ function markChanged() {
 }
 
 function resetGeneratedEmail() {
-  preview.hidden = true;
+  setVisibility(preview, false);
   subjectCopy.textContent = '';
   emailCopy.textContent = '';
   subjectCopyMessage.textContent = '';
   bodyCopyMessage.textContent = '';
+  setVisibility(subjectCopyMessage, false);
+  setVisibility(bodyCopyMessage, false);
   hasGenerated = false;
   formChanged.hidden = true;
   formError.hidden = true;
@@ -123,9 +136,11 @@ form.addEventListener('submit', event => {
   const details = { notice, quarter: document.querySelector('#quarter').value, company: company.value.trim(), date: formatDate(refundDate.value), amount: amount.value };
   subjectCopy.textContent = template.subject;
   emailCopy.textContent = template.body(details);
-  preview.hidden = false;
+  setVisibility(preview, true);
   subjectCopyMessage.textContent = '';
   bodyCopyMessage.textContent = '';
+  setVisibility(subjectCopyMessage, false);
+  setVisibility(bodyCopyMessage, false);
   hasGenerated = true;
   formChanged.hidden = true;
   generatedButton.innerHTML = 'Generate Email <span aria-hidden="true">→</span>';
@@ -135,6 +150,7 @@ form.addEventListener('submit', event => {
 async function copyText(text, successMessage, targetMessage) {
   try { await navigator.clipboard.writeText(text); targetMessage.textContent = successMessage; }
   catch { targetMessage.textContent = 'Copy failed. Select the text above and copy it manually.'; }
+  setVisibility(targetMessage, true);
 }
 document.querySelector('#copy-subject').addEventListener('click', () => copyText(subjectCopy.textContent, 'Subject copied.', subjectCopyMessage));
 document.querySelector('#copy-body').addEventListener('click', () => copyText(emailCopy.textContent, 'Email body copied.', bodyCopyMessage));
