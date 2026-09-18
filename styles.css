@@ -37,6 +37,10 @@ legend { padding:0 5px; color:#f7fbff; font-weight:750; }
 .field select:hover { border-color:rgba(97,199,239,.8); background-color:#12284e; cursor:pointer; }
 .field input:hover { border-color:rgba(97,199,239,.8); background:#12284e; }
 .field input:focus,.field select:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(41,171,226,.22); }
+.field input:autofill { color:#f7fbff; background:#0d1d3c; caret-color:#f7fbff; }
+.field input:-webkit-autofill,.field input:-webkit-autofill:hover,.field input:-webkit-autofill:focus { -webkit-text-fill-color:#f7fbff!important; caret-color:#f7fbff; border-color:var(--line); box-shadow:0 0 0 1000px #0d1d3c inset!important; transition:background-color 9999s ease-out 0s; }
+.field input:-webkit-autofill:hover { border-color:rgba(97,199,239,.8); }
+.field input:-webkit-autofill:focus { border-color:var(--blue); box-shadow:0 0 0 1000px #0d1d3c inset,0 0 0 3px rgba(41,171,226,.22)!important; }
 .field.field-error input,.field.field-error select { border-color:var(--danger); box-shadow:0 0 0 3px rgba(255,154,154,.14); }
 select option { color:#f7fbff; background:#102447; }
 .field input::placeholder { color:#8297b8; }
